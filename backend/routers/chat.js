@@ -1,4 +1,4 @@
-const Chat = require('../models/chat');
+const Chat = require('../models/Chat');
 const connect = require('../db');
 const express = require('express');
 
