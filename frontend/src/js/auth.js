@@ -44,7 +44,7 @@
 
 		let res = await response.json()
 		localStorage.setItem('token', 'Bearer ' + res.token);
-		if(response.status == 200){
+		if(response.status == 201){
 			window.location.replace("/index.html");
 		}
 		//const token = localStorage.getItem('token');

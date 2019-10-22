@@ -6,7 +6,8 @@ $(() => {
 	});
 });
 
-(function() { //getting chat from database
+(function() {
+	//getting chat from database
 	fetch('/chats')
 		.then(data => {
 			return data.json();
@@ -22,32 +23,52 @@ $(() => {
 		});
 })();
 
-(function() { // sending a message
+(function() {
+	// sending a message
 	$('form').submit(e => {
 		let li = document.createElement('li');
 		e.preventDefault();
 
 		var msg = $('#m').val();
-		msg = msg.replace(/</g, "&lt;").replace(/>/g, "&gt;").trim(); //avoiding js injection
-		if (msg === "") return -1; //empty messages cannot be sent 
+		msg = msg //avoiding js injection
+			.replace(/</g, '&lt;')
+			.replace(/>/g, '&gt;')
+			.trim();
+		if (msg === '') return -1; //empty messages cannot be sent
 
-		socket.emit('chat message', $('#m').val());
-		messages.appendChild(li).append($('#m').val());
-		messages.append(`by Anonymous: just now`);
+		const token = localStorage.getItem('token').replace('Bearer ', '');
+		console.log(parseJwt(token));
+		const nickname = parseJwt(token).nickname;
+
+		socket.emit('chat message', { token: token, msg: msg });
+		//socket.emit('chat message', msg );
+		messages.appendChild(li).append(msg);
+		messages.append(`by ${nickname}: just now`);
 		$('#m').val('');
 		return false;
 	});
 })();
 
-(function() { // receiving a message
-	socket.on('received', data => { 
-		
-		data = data.replace(/</g, "&lt;").replace(/>/g, "&gt;").trim();
-		if (data === "") return -1; //empty messages cannot be sent
+(function() {
+	// receiving a message
+	socket.on('received', data => {
+		data.msg = data.msg
+			.replace(/</g, '&lt;')
+			.replace(/>/g, '&gt;')
+			.trim();
+		if (data.msg === '') return -1; //empty messages cannot be displayed
 
 		let li = document.createElement('li');
 		var messages = document.getElementById('messages');
-		messages.appendChild(li).append(data);
-		messages.append(`by Anonymous: just now`);
+		messages.appendChild(li).append(data.msg);
+		messages.append(`by ${data.nickname}: just now`);
 	});
 })();
+
+const parseJwt = token => {
+	try {
+		return JSON.parse(atob(token.split('.')[1]));
+	} catch (e) {
+		return null;
+	}
+};

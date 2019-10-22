@@ -4,7 +4,7 @@ const JWT_KEY = require('../secret')();
 
 const auth = async (req, res, next) => {
 	try {
-        //console.log(req)
+		//console.log(req)
 		if (
 			req.hasOwnProperty('headers') &&
 			req.headers.hasOwnProperty('authorization')
@@ -17,13 +17,15 @@ const auth = async (req, res, next) => {
 			}
 			req.user = user;
 			req.token = token;
-            next();
+			next();
 		} else {
-            res.status(401).send('No token!')
-        }
+			res.status(401).send('No token!');
+		}
 	} catch (error) {
 		res.status(401).send('Not authorised to access this page');
 	}
 };
+
+
 
 module.exports = auth;
