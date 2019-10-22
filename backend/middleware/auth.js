@@ -9,20 +9,20 @@ const auth = async (req, res, next) => {
 			req.hasOwnProperty('headers') &&
 			req.headers.hasOwnProperty('authorization')
 		) {
-			const token = req.header('authorization').replace('Bearer ', ''); //try without replace?
+			const token = req.header('authorization').replace('Bearer ', '');
 			const data = jwt.verify(token, JWT_KEY);
 			const user = await User.findOne({ _id: data._id, 'tokens.token': token });
 			if (!user) {
-				throw new Error();
+				throw new Error('Invalid token');
 			}
 			req.user = user;
 			req.token = token;
             next();
 		} else {
-            res.status(401).send({error : 'No token!'}) //might be problematic
+            res.status(401).send('No token!')
         }
 	} catch (error) {
-		res.status(401).send({ error: 'Not authorised to access this page' });
+		res.status(401).send('Not authorised to access this page');
 	}
 };
 

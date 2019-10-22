@@ -5,7 +5,7 @@ const jwt = require('jsonwebtoken');
 const JWT_KEY = require('../secret')();
 
 const userSchema = mongoose.Schema({
-	name: {
+	nickname: {
 		type: String,
 		required: true,
 		trim: true
@@ -39,6 +39,9 @@ const userSchema = mongoose.Schema({
 userSchema.pre('save', async function(next) {
 	const user = this;
 	if (user.isModified('password')) {
+		if(user.password.length < 7){
+			throw new Error('Password is too short')
+		}
 		user.password = await bcrypt.hash(user.password, 8);
 	}
 	next();
@@ -55,11 +58,11 @@ userSchema.methods.generateAuthToken = async function() {
 userSchema.statics.findByCredentials = async (email, password) => {
 	const user = await User.findOne({ email });
 	if (!user) {
-		throw new Error({ error: 'Invalid login credentials' });
+		throw new Error('Invalid login credentials');
 	}
 	const isPasswordMatch = await bcrypt.compare(password, user.password);
 	if (!isPasswordMatch) {
-		throw new Error({ error: 'Invalid login credentials' });
+		throw new Error('Invalid login credentials');
 	}
 	return user;
 };

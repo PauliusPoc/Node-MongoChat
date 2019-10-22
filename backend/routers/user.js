@@ -16,13 +16,11 @@ router.post('/users', async (req, res) => {
     }
 })
 
-router.post('/users/login', async (req, res) => {
+router.post('/users/login', async (req, res) => { // todo /login
+    console.log("requested");
     try{
         const {email, password} = req.body;
         const user = await User.findByCredentials(email, password);
-        if (!user){
-            return res.status(401).send({error: 'Login failed! Check your credentials'});
-        }
         const token = await user.generateAuthToken();
         res.send({user, token})
     } catch(error){
@@ -54,7 +52,6 @@ router.post('/users/me/logoutall', auth, async (req, res) => {
         await req.user.save()
         res.send()
     } catch (error){
-        console.log(error);
         res.status(500).send(error)
     }
 })
