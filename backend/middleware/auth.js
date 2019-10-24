@@ -11,7 +11,7 @@ const auth = async (req, res, next) => {
 		) {
 			const token = req.header('authorization').replace('Bearer ', '');
 			const data = jwt.verify(token, JWT_KEY);
-			const user = await User.findOne({ _id: data._id, 'tokens.token': token });
+			const user = await User.findOne({ _id: data._id, 'tokens.token': token }).select('+tokens');
 			if (!user) {
 				throw new Error('Invalid token');
 			}

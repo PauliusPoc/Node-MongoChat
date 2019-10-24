@@ -6,7 +6,7 @@
 
 		var email = $('#email').val().replace(/</g, "&lt;").replace(/>/g, "&gt;").trim(); 
 		var password = $('#password').val().replace(/</g, "&lt;").replace(/>/g, "&gt;").trim();
-		const response = await fetch('/users/login', {
+		const response = await fetch('/auth/login', {
 			method: 'POST',
 			headers: {
 				'Content-Type': 'application/json'
@@ -34,15 +34,16 @@
 		var nickname = $('#nickname').val().replace(/</g, "&lt;").replace(/>/g, "&gt;").trim(); 
 		var email = $('#email').val().replace(/</g, "&lt;").replace(/>/g, "&gt;").trim(); 
 		var password = $('#password').val().replace(/</g, "&lt;").replace(/>/g, "&gt;").trim();
-		const response = await fetch('/users/', {
+		const response = await fetch('/auth/register', {
 			method: 'POST',
 			headers: {
 				'Content-Type': 'application/json'
 			},
 			body: JSON.stringify({ email, password, nickname })
 		});
-
-		let res = await response.json()
+		console.log('issiunte');
+		let res = await response.json();
+		console.log(res);
 		localStorage.setItem('token', 'Bearer ' + res.token);
 		if(response.status == 201){
 			window.location.replace("/index.html");

@@ -1,59 +1,68 @@
 const express = require('express');
 const User = require('../models/User');
-const auth = require('../middleware/auth')
+const auth = require('../middleware/auth');
 
 const router = express.Router();
 
-router.post('/users', async (req, res) => {
-    //Create new user
-    try {
-        const user = new User(req.body);
-        await user.save()
-        const token = await user.generateAuthToken();
-        res.status(201).send({user, token})
-    } catch (error) {
-        res.status(400).send(error)
-    }
-})
+router.get('/', auth, async (req, res) => {
+	//View all logged user profiles
+	try {
+		User.find({}).then(user => {
+			res.status(200).json(user);
+		});
+	} catch (error) {
+		res.status(400).send(error);
+	}
+});
 
-router.post('/users/login', async (req, res) => { // todo /login
-    console.log("requested");
-    try{
-        const {email, password} = req.body;
-        const user = await User.findByCredentials(email, password);
-        const token = await user.generateAuthToken();
-        res.send({user, token})
-    } catch(error){
-        res.status(400).send(error)
-    }
-})
+router.put(`/me`, auth, async (req, res, next) => {
+    // Change username
+	try {
+		const user = req.user;
+		user.nickname = req.body.username;
+		const token = await user.generateAuthToken();
+		req.user.tokens = req.user.tokens.filter(token => {
+			return token.token != req.token;
+		});
+		await user.save();
+		res.status(200).send({ token });
+	} catch (error) {
+		res.status(400).send(error);
+	}
+});
 
-router.get('/users/me', auth, async(req, res) => {
-    //View logged in user profile
-    res.send(req.user)
-})
 
-router.post('/users/me/logout', auth, async (req, res) => {
-    try {
-        req.user.tokens = req.user.tokens.filter((token) => {
-            return token.token != req.token;
-        })
-        await req.user.save()
-        res.send()
-    } catch (error) {
-        res.status(500).send(error)
-    }
-})
 
-router.post('/users/me/logoutall', auth, async (req, res) => {
-    try{
-        req.user.tokens.splice(0, req.user.tokens.length)
-        console.log(req.user.tokens);
-        await req.user.save()
-        res.send()
-    } catch (error){
-        res.status(500).send(error)
-    }
-})
+router.get('/me', auth, async (req, res) => {
+	//View logged in user profile
+	try {
+		res.send(req.user);
+	} catch (error) {
+		res.status(400).send(error);
+	}
+});
+
+router.post('/me/logout', auth, async (req, res) => {
+	try {
+		req.user.tokens = req.user.tokens.filter(token => {
+			return token.token != req.token;
+		});
+		await req.user.save();
+		res.send();
+	} catch (error) {
+		res.status(500).send(error);
+	}
+});
+
+router.post('/me/logoutall', auth, async (req, res) => {
+	try {
+		req.user.tokens.splice(0, req.user.tokens.length);
+		console.log(req.user.tokens);
+		await req.user.save();
+		res.send();
+	} catch (error) {
+		res.status(500).send(error);
+	}
+});
 
 module.exports = router;

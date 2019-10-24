@@ -13,6 +13,13 @@
 		<title>MongoChat</title>
 	</head>
 	<body>
+		<div class="groups_window">
+			<div class="top_menu">
+				<div class="title">Groupchat list</div>
+			</div>
+			<ul id="groups" class="side_list"></ul>
+		</div>
+
 		<div class="chat_window">
 			<div class="top_menu">
 				<div class="buttons">
@@ -20,13 +27,13 @@
 					<div class="button minimize"></div>
 					<div class="button maximize"></div>
 				</div>
-				<div class="title">Chat</div>
+				<div class="title" id="windowTitle">Chat</div>
 			</div>
 			<ul id="messages" class="messages"></ul>
 
 			<div class="bottom_wrapper clearfix">
 				<i id="typing"></i>
-				<form id="form">
+				<form id="msgform">
 					<div class="message_input_wrapper">
 						<input
 							id="m"
@@ -39,11 +46,33 @@
 					</button>
 				</form>
 			</div>
+			<div class="bottom_wrapper clearfix" style="bottom: 0;">
+					<i id="typing"></i>
+					<form id="nickname_form">
+						<div class="message_input_wrapper">
+							<input
+								id="nickname"
+								class="message_input"
+								placeholder="Type your new username here."
+							/>
+						</div>
+						<button class="send_message">
+							Change username
+						</button>
+					</form>
+				</div>
+		</div>
+
+		<div class="users_window">
+			<div class="top_menu">
+				<div class="title">User list</div>
+			</div>
+			<ul id="users" class="side_list"></ul>
 		</div>
 
 		<script src="/socket.io/socket.io.js"></script>
-        <script src="https://code.jquery.com/jquery-1.11.1.min.js"></script>
+		<script src="https://code.jquery.com/jquery-1.11.1.min.js"></script>
 		<script src="https://cdn.jsdelivr.net/gh/rexeze/formatTimeStamp/src/index-cdn.js"></script>
-		<script src="/js/index.js"></script>
+		<script type="text/javascript" src="./js/index.js" type='module'></script>
 	</body>
 </html>

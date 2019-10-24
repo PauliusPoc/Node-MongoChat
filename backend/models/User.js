@@ -3,8 +3,9 @@ const validator = require('validator');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const JWT_KEY = require('../secret')();
+const Schema = mongoose.Schema;
 
-const userSchema = mongoose.Schema({
+const userSchema = Schema({
 	nickname: {
 		type: String,
 		required: true,
@@ -19,21 +20,31 @@ const userSchema = mongoose.Schema({
 			if (!validator.isEmail(value)) {
 				throw new Error({ error: 'Invalid email adress' });
 			}
-		}
+		},
+		select: false
 	},
 	password: {
 		type: String,
 		required: true,
-		minLength: 7
+		minLength: 7,
+		select: false
 	},
 	tokens: [
 		{
 			token: {
-				type: String,
-				required: true
+				type: String
 			}
 		}
-	]
+		
+	],
+	select: false,
+	groupChats: [
+		{
+			_id : Schema.ObjectId,
+			name : String
+		}
+	],
+	select : false
 });
 
 userSchema.pre('save', async function(next) {
@@ -56,7 +67,7 @@ userSchema.methods.generateAuthToken = async function() {
 };
 
 userSchema.statics.findByCredentials = async (email, password) => {
-	const user = await User.findOne({ email });
+	const user = await User.findOne({ email }).select('+password');
 	if (!user) {
 		throw new Error('Invalid login credentials');
 	}
