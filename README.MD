@@ -21,6 +21,8 @@ npm run dev
 
 Additional info
 ----------------
+There are 3 frontend pages: index.html, register.html and login.html
+To get started you should create a new user on /register.html
 
 Endpoints not included in frontend:
 ```sh
