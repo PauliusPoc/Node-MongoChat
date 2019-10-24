@@ -30,7 +30,6 @@ async function getSocketID(id, type = 'private') {
 	}
 
 	const data = await response.json();
-	console.log(data);
 	console.log('response ' + data); // TODO : check if i should return only ID
 	// rename data
 
@@ -60,7 +59,24 @@ async function FetchMessages() {
 		}
 	});
 	const data = await response.json();
-	console.log(data);
+
+	const usr1 = parseJwt(token);
+	if (data.type == 'private') {
+		let members = data.members;
+		let usr2Nick = '';
+		members.forEach(item => {
+			if (item._id != usr1._id) {
+				usr2Nick = item.nickname;
+			}
+		});
+		document.getElementById(
+			'windowTitle'
+		).textContent = `${usr1.nickname} (YOU) chatting with ${usr2Nick}`;
+	} else {
+		document.getElementById(
+			'windowTitle'
+		).textContent = `${usr1.nickname} (YOU) chatting with ${data.name}`;
+	}
 
 	let root = document.getElementById('messages');
 	while (root.firstChild) {
@@ -125,7 +141,7 @@ async function FetchMessages() {
 	$('#msgform').submit(async e => {
 		let li = document.createElement('li');
 		e.preventDefault();
-		console.log("message");
+		console.log('message');
 
 		var msg = $('#m').val();
 		msg = msg //avoiding js injection
@@ -139,12 +155,12 @@ async function FetchMessages() {
 			method: 'PUT',
 			headers: {
 				'Content-Type': 'application/json',
-				Authorization : token
+				Authorization: token
 			},
-			body: JSON.stringify({msg : msg, chatId : socketId})
-		})
+			body: JSON.stringify({ msg: msg, chatId: socketId })
+		});
 
-		if(response.status == 201){
+		if (response.status == 201) {
 			const _id = socketId;
 			socket.emit('chat message', {
 				_id: _id,
@@ -167,7 +183,7 @@ async function FetchMessages() {
 	$('#nickname_form').submit(async e => {
 		let li = document.createElement('li');
 		e.preventDefault();
-		console.log("nickneimas");
+		console.log('nickneimas');
 
 		var msg = $('#nickname').val();
 		msg = msg //avoiding js injection
@@ -175,29 +191,24 @@ async function FetchMessages() {
 			.replace(/>/g, '&gt;')
 			.trim();
 		if (msg === '') return -1; //empty messages cannot be sent
-		
-		const mesag = JSON.stringify(msg);
-		console.log(mesag);
 
+		
 		const token = localStorage.getItem('token');
 		const response = await fetch('/users/me', {
 			method: 'PUT',
 			headers: {
 				'Content-Type': 'application/json',
-				Authorization : token
+				Authorization: token
 			},
-			body: JSON.stringify({username : msg})
-			
-		})
-		let res = await response.json()
+			body: JSON.stringify({ username: msg })
+		});
+		let res = await response.json();
 		const newToken = res.token;
-		console.log(res);
-		console.log(newToken);
 		localStorage.setItem('token', 'Bearer ' + newToken);
-		document.getElementById('windowTitle').textContent = parseJwt(newToken).nickname;
+		$('#nickname').val();
+		return false;
 	});
 })();
-
 
 (function() {
 	// receiving a message

@@ -55,7 +55,6 @@ io.of(dynamicNsp, (nsp, query, next) => {
     })
     socket.on('leave room', async room => {
         socket.leave(room);
-        console.log("socket left");
         socket.to(room).emit('user left', socket.id);
     })
 });

@@ -57,7 +57,6 @@ router.post('/me/logout', auth, async (req, res) => {
 router.post('/me/logoutall', auth, async (req, res) => {
 	try {
 		req.user.tokens.splice(0, req.user.tokens.length);
-		console.log(req.user.tokens);
 		await req.user.save();
 		res.send();
 	} catch (error) {
