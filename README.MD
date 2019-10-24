@@ -30,8 +30,9 @@ Endpoints not included in frontend:
 POST:
 
 /users/me/logout  
-
+#clears out current session token
 /users/me/logoutall
+#logs out all user sessions (clears all tokens)
 
 /chats/
 # Creates new group chat
