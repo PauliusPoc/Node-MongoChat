@@ -33,7 +33,7 @@ POST:
 /chats/
 # Creates new group chat
 {
-	"name" : "GrupinisChatas"
+	"name" : "GroupChatName"
 }
 
 PUT 
