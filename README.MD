@@ -29,12 +29,12 @@ POST:
 /users/me/logout  
 
 /users/me/logoutall
-{
-	"name" : "GrupinisChatas"
-}
 
 /chats/
 # Creates new group chat
+{
+	"name" : "GrupinisChatas"
+}
 
 PUT 
 /chats/:chatId 
